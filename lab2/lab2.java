@@ -28,6 +28,9 @@ public class lab2
 			{
 				/* Processes the line */
 				file.println("Processing Line.");
+
+				line = line.replace("$", " ");
+				line = line.replace(",", " ");
 				++ address;
 
 				if(hasLabel(line))
@@ -42,7 +45,7 @@ public class lab2
 				if(line.length() > 0)
 				{
 					Instruction instruction = new Instruction(line, address);
-					file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
+					//file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
 				}
 				else
 				{

@@ -1,19 +1,18 @@
 import java.lang.String;
 
-class Instruction
+public class Instruction
 {
 	private String line;
 	private String[] instructions;
-	private String machinecode;
+	private MachineCode machinecode;
 	private int address;
 
 	public Instruction(String line, int address)
 	{
 		this.line = line;
-		this.instructions = line.split(" ");
+		this.instructions = line.split(" +");
 		this.address = address;
-		//splitLine(line);
-
+		this.machinecode = new MachineCode(instructions);
 	}
 
 	public String getInstruction()
@@ -26,8 +25,17 @@ class Instruction
 		return this.address;
 	}
 
-	public void getMachinecode()
+	public String getMachinecode()
 	{
-		/* Returns machine code */
+		return this.machinecode.getMachineCode();
+	}
+
+	public void printAll()
+	{
+		System.out.println("Printing shit");
+		for(String s : instructions)
+		{
+			System.out.println(s);
+		}
 	}
 }
