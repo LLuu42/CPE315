@@ -34,47 +34,23 @@ public class lab2
 				file.println("Processing Line.");
 				++ address;
 
-				switch (lineType(line))
+				if(hasLabel(line))
 				{
-					case "comment":					
-						file.println("Comment.");
-						-- address;						
-						break;
-
-					case "label":
-						file.println("Label.");
-
-						file.printf("Label: %s\n", getLabel(line));
-						labels.add(new Label(getLabel(line), address));
-						-- address;
-
-						break;
-
-					case "label and other":
-						file.println("Label and Instruction");
-
-						file.printf("Label: %s\n", getLabel(line));
-						labels.add(new Label(getLabel(line), address));
-
-					case "no label":
-						file.println("No Label.");					
-						line = getInstruction(line);
-
-						/* Check if line is only a label with a comment*/
-						if(line.length() > 0) 
-						{
-							Instruction instruction = new Instruction(line, address);
-							file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
-						}
-						else
-						{
-							/* no instruction present */
-							-- address;
-						}
-
-						break;
+					file.println("Label.");
+					labels.add(new Label(getLabel(line), address));
 				}
 
+				line = getInstruction(line);
+
+				if(line.length() > 0)
+				{
+					Instruction instruction = new Instruction(line, address);
+					file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
+				}
+				else
+				{
+					-- address;
+				}
 			}
 		}
 	}	
@@ -87,29 +63,6 @@ public class lab2
 	private static String getLabel(String line)
 	{
 		return line.substring(0, line.indexOf(':'));
-	}
-
-	private static String lineType(String line)
-	{
-		if (line.charAt(0) == '#')
-		{
-			return "comment";
-		}
-		else if (line.contains(":"))
-		{
-			if(line.indexOf(':') == line.length() - 1)
-			{
-				return "label";
-			}
-			else
-			{
-				return "label and other";
-			}
-		}
-		else
-		{
-			return "no label";
-		}
 	}
 
 	private static String getInstruction(String line)
