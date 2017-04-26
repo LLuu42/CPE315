@@ -24,11 +24,7 @@ public class lab2
 		{
 			line = scanner.nextLine();
 
-			if((line = line.trim()).length() == 0) //remove whitespace
-			{
-				/* Do not process blank lines */
-			}
-			else
+			if((line = line.trim()).length() > 0) //remove whitespace. do not process blank lines
 			{
 				/* Processes the line */
 				file.println("Processing Line.");
@@ -36,8 +32,9 @@ public class lab2
 
 				if(hasLabel(line))
 				{
-					file.println("Label.");
-					labels.add(new Label(getLabel(line), address));
+					Label label = new Label(getLabel(line), address);
+					labels.add(label);
+					file.printf("Label: %s, address: %d\n", label.getLabel(), label.getAddress());
 				}
 
 				line = getInstruction(line);
@@ -91,6 +88,5 @@ public class lab2
 		}
 
 		return line;
-		
 	}
 }
