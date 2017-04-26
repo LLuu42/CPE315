@@ -1,8 +1,8 @@
 
 public class Label
 {
-	String label;
-	int address;
+	private String label;
+	private int address;
 
 	public Label(String lable, int address)
 	{

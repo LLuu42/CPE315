@@ -17,6 +17,7 @@ public class lab2
 		PrintStream file = new PrintStream(System.out);
 		Scanner scanner = new Scanner(System.in);
 
+		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<Label> labels = new ArrayList<Label>();
 
 		while(scanner.hasNextLine())
@@ -31,12 +32,13 @@ public class lab2
 			{
 				/* Processes the line */
 				file.println("Processing Line.");
+				++ address;
 
 				switch (lineType(line))
 				{
-					case "comment":
+					case "comment":					
 						file.println("Comment.");
-						++ address;
+						-- address;						
 						break;
 
 					case "label":
@@ -44,34 +46,43 @@ public class lab2
 
 						file.printf("Label: %s\n", getLabel(line));
 						labels.add(new Label(getLabel(line), address));
+						-- address;
 
 						break;
 
-					case "label and instruction":
-						file.println("Lable and Instruction");
+					case "label and other":
+						file.println("Label and Instruction");
 
 						file.printf("Label: %s\n", getLabel(line));
 						labels.add(new Label(getLabel(line), address));
 
-						file.printf("Instruction: %s\n", getInstruction(line));
+					case "no label":
+						file.println("No Label.");					
+						line = getInstruction(line);
 
-						break;
-
-					case "instruction":
-						file.println("Instruction.");
-
-						file.printf("Instruction: %s\n", getInstruction(line));						
+						/* Check if line is only a label with a comment*/
+						if(line.length() > 0) 
+						{
+							Instruction instruction = new Instruction(line, address);
+							file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
+						}
+						else
+						{
+							/* no instruction present */
+							-- address;
+						}
 
 						break;
 				}
 
-				
-
 			}
 		}
-
-
 	}	
+
+	private static boolean hasLabel(String line)
+	{
+		return (line.indexOf(':') > -1);
+	}
 
 	private static String getLabel(String line)
 	{
@@ -87,13 +98,17 @@ public class lab2
 		else if (line.contains(":"))
 		{
 			if(line.indexOf(':') == line.length() - 1)
+			{
 				return "label";
+			}
 			else
-				return "label and instruction";
+			{
+				return "label and other";
+			}
 		}
 		else
 		{
-			return "instruction";
+			return "no label";
 		}
 	}
 
