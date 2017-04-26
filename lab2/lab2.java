@@ -31,6 +31,7 @@ public class lab2
 
 				line = line.replace("$", " ");
 				line = line.replace(",", " ");
+				line = line.toLowerCase();
 				++ address;
 
 				if(hasLabel(line))

@@ -4,7 +4,7 @@ public class Instruction
 {
 	private String line;
 	private String[] instructions;
-	private MachineCode machinecode;
+	private Machinecode machinecode;
 	private int address;
 
 	public Instruction(String line, int address)
@@ -12,7 +12,7 @@ public class Instruction
 		this.line = line;
 		this.instructions = line.split(" +");
 		this.address = address;
-		this.machinecode = new MachineCode(instructions);
+		this.machinecode = new Machinecode(instructions);
 	}
 
 	public String getInstruction()
@@ -27,7 +27,7 @@ public class Instruction
 
 	public String getMachinecode()
 	{
-		return this.machinecode.getMachineCode();
+		return this.machinecode.getMachinecode();
 	}
 
 	public void printAll()
