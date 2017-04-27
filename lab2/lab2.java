@@ -24,6 +24,9 @@ public class lab2
 		{
 			line = scanner.nextLine();
 
+			if(line.equals("yolo"))
+				break;
+
 			if((line = line.trim()).length() > 0) //remove whitespace. do not process blank lines
 			{
 				/* Processes the line */
@@ -38,17 +41,19 @@ public class lab2
 				{
 					Label label = new Label(getLabel(line), address);
 					labels.add(label);
-					file.printf("Label: %s, address: %d\n", label.getLabel(), label.getAddress());
+					file.printf("Label: %s, address: %d\n", labels.get(0).getLabel(), labels.get(0).getAddress());
+
 				}
 
 				line = getInstruction(line);
 
 				if(line.length() > 0)
 				{
-					Instruction instruction = new Instruction(line, address);
+					Instruction instruction = new Instruction(line, address, labels);
 					instructions.add(instruction);
-					file.println(instruction.getMachinecode());
+					//file.println(instruction.getMachinecode());
 					//file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
+					//instructions.add(instruction);
 				}
 				else
 				{
@@ -56,10 +61,21 @@ public class lab2
 				}
 			}
 		}
+		printInstructionMachineCodes(file, instructions);
 	}	
 
-	private static void printInstructionMachineCodes(PrintStream file)
+	private static void printInstructionMachineCodes(PrintStream file, ArrayList<Instruction> instructions)
 	{
+		int i;
+		for(i = 0; i < instructions.size(); ++i)
+		{
+			if(instructions.get(i).getMachinecode().equals("error"))
+			{
+				file.printf("invalid instruction: %s\n", instructions.get(i).getInstruction());
+				return;
+			}
+			file.println(instructions.get(i).getMachinecode());
+		}
 	}
 
 	private static boolean hasLabel(String line)

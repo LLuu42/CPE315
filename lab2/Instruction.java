@@ -1,4 +1,5 @@
 import java.lang.String;
+import java.util.ArrayList;
 
 public class Instruction
 {
@@ -7,12 +8,12 @@ public class Instruction
 	private Machinecode machinecode;
 	private int address;
 
-	public Instruction(String line, int address)
+	public Instruction(String line, int address, ArrayList<Label> labels)
 	{
 		this.line = line;
 		this.instructions = line.split(" +");
 		this.address = address;
-		this.machinecode = new Machinecode(instructions);
+		this.machinecode = new Machinecode(instructions, labels);
 	}
 
 	public String getInstruction()

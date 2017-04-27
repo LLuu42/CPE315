@@ -1,20 +1,24 @@
 import java.lang.String;
+import java.lang.Integer;
 import java.util.Hashtable;
+import java.util.ArrayList;
 
 
 public class Machinecode
 {
 	private String machinecode;
 	private String[] instructions;
+	private ArrayList<Label> labels;
 	private Hashtable<String, String> instructionTable;
 	private Hashtable<String, String> registerTable;
 
 
-	public Machinecode(String[] instructions)
+	public Machinecode(String[] instructions, ArrayList<Label> labels)
 	{
 		this.instructions = instructions;
 		this.instructionTable = new Hashtable<String, String>();
 		this.registerTable = new Hashtable<String, String>();
+		this.labels = labels;
 		setInstructionTable();
 		setRegisterTable();
 		setMachinecode();
@@ -28,6 +32,7 @@ public class Machinecode
 	private void setMachinecode()
 	{
 		String instruction = instructions[0];
+		String offset;
 		switch(instruction)
 		{
 			case "and":
@@ -62,21 +67,62 @@ public class Machinecode
 				break;
 
 			case "addi":
+				System.out.println("addi");
+				String immediate = getBinaryString(instructions[3], 16);
+
+				this.machinecode = (instructionTable.get("addi") + " " + 
+								registerTable.get(instructions[2]) + " " +
+								registerTable.get(instructions[1]) + " " + 
+								immediate);			
 				break;
 
 			case "sll":
+				System.out.println("sll");
+				this.machinecode = (instructionTable.get("sll") + " " + 
+								registerTable.get(instructions[2]) + " " +
+								registerTable.get(instructions[1]) + " " + 
+								getBinaryString(instructions[3], 5) + " " +
+								"00000");
 				break;
 
 			case "sub":
+				System.out.println("sub");
+				this.machinecode = (instructionTable.get("sub") + " " + 
+								registerTable.get(instructions[2]) + " " +
+								registerTable.get(instructions[3]) + " " + 
+								registerTable.get(instructions[1]) + " " +
+								"00000" + " " + "100010");
 				break;
 
 			case "slt":
+				System.out.println("slt");
+				this.machinecode = (instructionTable.get("slt") + " " + 
+								registerTable.get(instructions[2]) + " " +
+								registerTable.get(instructions[3]) + " " + 
+								registerTable.get(instructions[1]) + " " +
+								"00000" + " " + "101010");			
 				break;
 
 			case "beq":
+				System.out.println("beq");
+				System.out.printf("Label: %s\n", instructions[3]);
+				offset = getLabelAddress(instructions[3]);
+
+				this.machinecode = (instructionTable.get("beq") + " " + 
+								registerTable.get(instructions[1]) + " " +
+								registerTable.get(instructions[2]) + " " + 
+								offset);		
 				break;
 
 			case "bne":
+				System.out.println("bne");
+				System.out.printf("Label: %s\n", instructions[3]);
+				offset = getLabelAddress(instructions[3]);
+
+				this.machinecode = (instructionTable.get("bne") + " " + 
+								registerTable.get(instructions[1]) + " " +
+								registerTable.get(instructions[2]) + " " + 
+								offset);
 				break;
 
 			case "lw":
@@ -85,10 +131,23 @@ public class Machinecode
 			case "sw":
 				break;
 
+			case "j":
+				System.out.println("j");
+				offset = getLabelAddress(instructions[1]);
+				this.machinecode = (instructionTable.get("jr") + " " + offset);
+				break;
+
 			case "jr":
+				System.out.println("jr");
+				this.machinecode = (instructionTable.get("jr") + " " + 
+								registerTable.get(instructions[1]) + " " + 
+								"000 000 000 001000");
 				break;
 
 			case "jal":
+				System.out.println("jal");
+				offset = getLabelAddress(instructions[1]);
+				this.machinecode = (instructionTable.get("jr") + " " + offset);
 				break;
 
 			default:
@@ -96,16 +155,56 @@ public class Machinecode
 		}
 
 	}
+
+	private String getLabelAddress(String label)
+	{
+		int i;
+		String labelAddress = "0000000000000000";
+		for(i = 0; i < labels.size(); ++i)
+		{
+			if(labels.get(i).getLabel().equals(label))
+			{
+				labelAddress = getBinaryString(Integer.toString(labels.get(i).getAddress()), 16);
+			}
+		}
+		return labelAddress;
+	}
+
+	private String getBinaryString(String toBinary, int wordLength)
+	{
+		String tmp = Integer.toBinaryString(Integer.parseInt(toBinary));
+		while(tmp.length() < wordLength)
+		{
+			tmp = "0" + tmp;
+		}
+		return tmp;
+	}
+
 	private void setInstructionTable()
 	{
 		instructionTable.put("and", "000000");
 		instructionTable.put("or", "000000");
+		instructionTable.put("addi", "001000");
 		instructionTable.put("add", "000000");
+		
+		instructionTable.put("sll", "000000 00000");
+
+		instructionTable.put("sub", "000000");
+		instructionTable.put("slt", "000000");
+
+		instructionTable.put("beq", "000100");
+		instructionTable.put("bne", "000101");
+
+		instructionTable.put("j", "000010");
+		instructionTable.put("jr", "000000");
+		instructionTable.put("jal", "000011");
+
 	}
 
 	private void setRegisterTable()
 	{
 		registerTable.put("0", "00000");
+		registerTable.put("zero", "00000");
 		registerTable.put("v0", "00010");
 		registerTable.put("v1", "00011");
 		registerTable.put("a0", "00100");
