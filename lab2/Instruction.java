@@ -33,7 +33,7 @@ public class Instruction
 
 	public void printAll()
 	{
-		System.out.println("Printing shit");
+		//System.out.println("Printing shit");
 		for(String s : instructions)
 		{
 			System.out.println(s);
