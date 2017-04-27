@@ -46,6 +46,8 @@ public class lab2
 				if(line.length() > 0)
 				{
 					Instruction instruction = new Instruction(line, address);
+					instructions.add(instruction);
+					file.println(instruction.getMachinecode());
 					//file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
 				}
 				else
@@ -55,6 +57,10 @@ public class lab2
 			}
 		}
 	}	
+
+	private static void printInstructionMachineCodes(PrintStream file)
+	{
+	}
 
 	private static boolean hasLabel(String line)
 	{

@@ -32,21 +32,33 @@ public class Machinecode
 		{
 			case "and":
 				System.out.println("And");
-				machinecode = (instructionTable.get("and") + " " + 
+				this.machinecode = (instructionTable.get("and") + " " + 
 								registerTable.get(instructions[2]) + " " +
 								registerTable.get(instructions[3]) + " " + 
 								registerTable.get(instructions[1]) + " " +
 								"00000" + " " + "100100");
-				System.out.println(machinecode);
+				//System.out.println(machinecode);
 
 				break;
 
 			case "or":
 				System.out.println("Or");
-				//machinecode = 
+				this.machinecode = (instructionTable.get("or") + " " + 
+								registerTable.get(instructions[2]) + " " +
+								registerTable.get(instructions[3]) + " " + 
+								registerTable.get(instructions[1]) + " " +
+								"00000" + " " + "100101");
+				//System.out.println(machinecode);
 				break;
 
 			case "add":
+				System.out.println("add");
+				this.machinecode = (instructionTable.get("add") + " " + 
+								registerTable.get(instructions[2]) + " " +
+								registerTable.get(instructions[3]) + " " + 
+								registerTable.get(instructions[1]) + " " +
+								"00000" + " " + "100000");
+				//System.out.println(machinecode);
 				break;
 
 			case "addi":
@@ -78,13 +90,17 @@ public class Machinecode
 
 			case "jal":
 				break;
+
+			default:
+				this.machinecode = "error"; 
 		}
 
 	}
-
 	private void setInstructionTable()
 	{
 		instructionTable.put("and", "000000");
+		instructionTable.put("or", "000000");
+		instructionTable.put("add", "000000");
 	}
 
 	private void setRegisterTable()
