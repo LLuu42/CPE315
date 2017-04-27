@@ -13,7 +13,7 @@ public class Instruction
 		this.line = line;
 		this.instructions = line.split(" +");
 		this.address = address;
-		this.machinecode = new Machinecode(instructions, labels);
+		this.machinecode = new Machinecode(instructions, labels, address);
 	}
 
 	public String getInstruction()
@@ -33,7 +33,6 @@ public class Instruction
 
 	public void printAll()
 	{
-		//System.out.println("Printing shit");
 		for(String s : instructions)
 		{
 			System.out.println(s);

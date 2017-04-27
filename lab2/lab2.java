@@ -8,15 +8,15 @@ import java.io.PrintStream;
 
 public class lab2
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws FileNotFoundException
 	{
 		int address = -1;
-		//int i;
 		String line;
 
+		File readFile = new File(args[0]);
 
 		PrintStream file = new PrintStream(System.out);
-		Scanner scanner = new Scanner(args[1]);
+		Scanner scanner = new Scanner(readFile);
 
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<Label> labels = new ArrayList<Label>();
@@ -27,8 +27,6 @@ public class lab2
 
 			if((line = line.trim()).length() > 0) //remove whitespace. do not process blank lines
 			{
-				/* Processes the line */
-				//file.println("Processing Line.");
 
 				line = line.replace("$", " ");
 				line = line.replace(",", " ");
@@ -40,7 +38,6 @@ public class lab2
 				{
 					Label label = new Label(getLabel(line), address);
 					labels.add(label);
-					//file.printf("Label: %s, address: %d\n", labels.get(0).getLabel(), labels.get(0).getAddress());
 
 				}
 
@@ -50,9 +47,6 @@ public class lab2
 				{
 					Instruction instruction = new Instruction(line, address, labels);
 					instructions.add(instruction);
-					//file.println(instruction.getMachinecode());
-					//file.printf("Instruction: %s, Address: %d\n", instruction.getInstruction(), instruction.getAddress());
-					//instructions.add(instruction);
 				}
 				else
 				{
