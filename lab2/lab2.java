@@ -1,3 +1,14 @@
+/**
+* lab2 Assignment
+* CPE 315
+* Dr. John Seng
+* @author Lara Luu
+* 26 April 2017
+* Java 2-pass MIPS assembler  
+* Loads in MIPS assembly files and output the corresponding machine code (to the screen). 
+* @Input: MIPS assembly files with comments, labels, and whitespace (spaces and tabs)
+* @Output: Machine code for the MIPS assembly code to the terminal.
+*/
 
 import java.util.Scanner;
 import java.io.File;
@@ -18,8 +29,8 @@ public class lab2
 		PrintStream file = new PrintStream(System.out);
 		Scanner scanner = new Scanner(readFile);
 
-		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-		ArrayList<Label> labels = new ArrayList<Label>();
+		ArrayList<Instruction> instructions = new ArrayList<Instruction>(); //Array containing all the instructions
+		ArrayList<Label> labels = new ArrayList<Label>(); //Array containing all the labels
 
 		while(scanner.hasNextLine())
 		{
@@ -36,20 +47,23 @@ public class lab2
 
 				if(hasLabel(line))
 				{
+					/* Create new lable object with lable name and address location */
 					Label label = new Label(getLabel(line), address);
 					labels.add(label);
 
 				}
 
-				line = getInstruction(line);
+				line = getInstruction(line); //removes all comments and labels from the line.
 
 				if(line.length() > 0)
 				{
+					/* Line is an address */
 					Instruction instruction = new Instruction(line, address, labels);
 					instructions.add(instruction);
 				}
 				else
-				{
+				{ 	
+					/* Line is either a comment or label only, do not count towards address length. */
 					-- address;
 				}
 			}
@@ -57,6 +71,10 @@ public class lab2
 		printInstructionMachineCodes(file, instructions);
 	}	
 
+	/** 
+	* Iterates through the array of Instructions and prints out the machine code for each one of them
+	* Where it prints is specified in the fiven PrintStream argument
+	*/
 	private static void printInstructionMachineCodes(PrintStream file, ArrayList<Instruction> instructions)
 	{
 		int i;
@@ -71,16 +89,27 @@ public class lab2
 		}
 	}
 
+	/** 
+	* @return true if line has lable, false if not.
+	*/
 	private static boolean hasLabel(String line)
 	{
 		return (line.indexOf(':') > -1);
 	}
 
+	/** 
+	* Finds and returns Assembly lable
+	* @return String w /label
+	*/
 	private static String getLabel(String line)
 	{
 		return line.substring(0, line.indexOf(':'));
 	}
 
+	/** 
+	* Removes all labels and comments from instruction comment.
+	* @return truncated string if label found, same string if lable not found
+	*/
 	private static String getInstruction(String line)
 	{
 		line = removeLabel(line);
@@ -88,9 +117,13 @@ public class lab2
 		return line.trim();
 	}
 
+	/** 
+	* Removes labels from instruction comment.
+	* @return truncated string if label found, same string if lable not found
+	*/
 	private static String removeLabel(String line)
 	{
-		int labelIdx = line.indexOf(':');
+		int labelIdx = line.indexOf(':'); //finds location of comment, assumes no other non-commented ':' characters in line
 		if(labelIdx > -1)
 		{
 			line = line.substring(labelIdx + 1, line.length());
@@ -98,9 +131,13 @@ public class lab2
 		return line;
 	}
 
+	/** 
+	* Removes comments from instruction comment.
+	* @return truncated string if label found, same string if lable not found
+	*/
 	private static String removeComment(String line)
 	{
-		int commentIdx = line.indexOf('#');
+		int commentIdx = line.indexOf('#'); //finds location of comment, ignores all '#' characters thereafter
 		if(commentIdx > -1)
 		{
 			line = line.substring(0, commentIdx);

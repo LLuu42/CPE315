@@ -1,3 +1,10 @@
+/**
+* Class Machinecode
+* @author Lara Luu
+* 26 April 2017
+* Generates the machine codes depending on instruction type and arguments
+*/
+
 import java.lang.String;
 import java.lang.Integer;
 import java.util.Hashtable;
@@ -10,8 +17,8 @@ public class Machinecode
 	private String[] instructions;
 	private ArrayList<Label> labels;
 	private int address;
-	private Hashtable<String, String> instructionTable;
-	private Hashtable<String, String> registerTable;
+	private Hashtable<String, String> instructionTable; //maps the instructions to their corresponding opcode
+	private Hashtable<String, String> registerTable;	// maps the register names to their corresponding binary values
 
 
 	public Machinecode(String[] instructions, ArrayList<Label> labels, int address)
@@ -31,12 +38,15 @@ public class Machinecode
 		return machinecode;
 	}
 
+	/* Sets different machine codes based on instruction type. */
+	/* Organize into instruction types to simplify for next project */
 	private void setMachinecode()
 	{
 		String instruction = instructions[0];
 		String offset;
 		String reg;
 
+		/* Switch generation of different codes based on instruction. Pretty lengthy, but straightforward. */
 		switch(instruction)
 		{
 			case "and":
@@ -155,18 +165,24 @@ public class Machinecode
 
 	}
 
+	/* Finds the offset of lw and sw functions. */ 
+	/* Does this by removing the parentheses in the offset arguement(switch to trim later)*/
 	private String getOffset(String line)
 	{
 		int parenIdx = line.indexOf('(');
 		return line.substring(0, parenIdx);
 	}
 
+	/* Finds the register stored in the parentheses of lw and sw functions. */ 
+	/* Does this by removing the parentheses in the offset arguement(switch to trim later)*/
 	private String getRegister(String line)
 	{
 		int closeIdx = line.indexOf(')');
 		return line.substring(0, closeIdx);
 	}
 
+	/* Finds the branching address of the code. */
+	/* Formula: brn address = (current address - label address - 1) */  
 	private String getBrnLabelAddress(String label, int length)
 	{
 		int i;
@@ -181,7 +197,8 @@ public class Machinecode
 		return labelAddress;
 	}
 
-		private String getLabelAddress(String label, int length)
+	/* Finds and returns the label's address (unmodified) */
+	private String getLabelAddress(String label, int length)
 	{
 		int i;
 		String labelAddress = "0000000000000000";
@@ -195,10 +212,11 @@ public class Machinecode
 		return labelAddress;
 	}
 
+	/* Finds and returns the the binary string of an Integer argument. */
+	/* If binary String does not have enough leading 0's to match the machine code length, appends 0s onto the code. */
 	private String getBinaryString(String toBinary, int wordLength)
 	{
 		String tmp = Integer.toBinaryString(Integer.parseInt(toBinary));
-		//System.out.println(tmp);
 
 		if(Integer.parseInt(toBinary) < 0)
 		{
@@ -211,6 +229,7 @@ public class Machinecode
 		return tmp;
 	}
 
+	/* Maps instructions to their various opcode values */
 	private void setInstructionTable()
 	{
 		instructionTable.put("and", "000000");
@@ -235,6 +254,7 @@ public class Machinecode
 
 	}
 
+	/* Maps registers to their binary values */
 	private void setRegisterTable()
 	{
 		registerTable.put("0", "00000");

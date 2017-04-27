@@ -1,4 +1,9 @@
-
+/**
+* Class Label
+* @author Lara Luu
+* 26 April 2017
+* Stores the information for MIPS labels by name and address location 
+*/
 public class Label
 {
 	private String label;
