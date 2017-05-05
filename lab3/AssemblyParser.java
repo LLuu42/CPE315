@@ -23,12 +23,12 @@ public class AssemblyParser
 	private static ArrayList<Instruction> instructions;
 	private static ArrayList<Label> labels;
 
-	public AssemblyParser(String[] args) throws FileNotFoundException
+	public AssemblyParser(String filename) throws FileNotFoundException
 	{
 		this.instructions = new ArrayList<Instruction>(); //Array containing all the instructions
 		this.labels = new ArrayList<Label>(); //Array containing all the labels
 
-		parseFile(args[0]);
+		parseFile(filename);
 	}	
 
 	public ArrayList<Instruction> getInstructions()

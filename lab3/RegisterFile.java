@@ -28,7 +28,7 @@ public class RegisterFile
 
 	public void printRegisters()
 	{
-		userDisplay.printf("$0 = 0 \t$v0 = %d \t$v1 = %d \t$a0 = %d\n", 
+		userDisplay.printf("$0 = 0 \t\t$v0 = %d  \t$v1 = %d \t$a0 = %d\n", 
 							registers.get("v0"), registers.get("v1"), registers.get("a0"));
 
 		userDisplay.printf("$a1 = %d \t$a2 = %d \t$a3 = %d \t$t0 = %d\n", 
