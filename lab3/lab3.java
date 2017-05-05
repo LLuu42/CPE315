@@ -127,39 +127,19 @@ public class lab3
 			switch(currentInstruction.getInstruction())
 			{
 				case "and":
-					System.out.println("and");
-					x = registers.getRegister(currentInstruction.getArguementAt(2));
-					y = registers.getRegister(currentInstruction.getArguementAt(3));
-					System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
-					registers.setRegister(currentInstruction.getArguementAt(1), x & y);	
-					++pc;						
+					rInstruction(currentInstruction, '&', false);				
 					break;
 
 				case "or":
-					System.out.println("add");
-					x = registers.getRegister(currentInstruction.getArguementAt(2));
-					y = registers.getRegister(currentInstruction.getArguementAt(3));
-					System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
-					registers.setRegister(currentInstruction.getArguementAt(1), x | y);	
-					++pc;	
+					rInstruction(currentInstruction, '|', false);
 					break;
 
 				case "add":
-					System.out.println("add");
-					x = registers.getRegister(currentInstruction.getArguementAt(2));
-					y = registers.getRegister(currentInstruction.getArguementAt(3));
-					System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
-					registers.setRegister(currentInstruction.getArguementAt(1), x + y);	
-					++pc;				
+					rInstruction(currentInstruction, '+', false);		
 					break;
 
 				case "addi":
-					System.out.println("addi");
-					//System.out.println("1st register: " + currentInstruction.getArguementAt(2));
-					x = registers.getRegister(currentInstruction.getArguementAt(2));
-					y = Integer.parseInt(currentInstruction.getArguementAt(3));
-					registers.setRegister(currentInstruction.getArguementAt(1), x + y);
-					++pc;			
+					rInstruction(currentInstruction, '+', true);	
 					break;
 
 				case "sll":
@@ -167,7 +147,7 @@ public class lab3
 					break;
 
 				case "sub":
-
+					rInstruction(currentInstruction, '-', false);
 					break;
 
 				case "slt":
@@ -183,6 +163,10 @@ public class lab3
 					{
 						pc = getLabelAddress(labels, label);
 					}
+					else
+					{
+						pc ++;
+					}
 					break;
 
 				case "bne":
@@ -193,6 +177,10 @@ public class lab3
 					if(x != y)
 					{
 						pc = getLabelAddress(labels, label);
+					}
+					else
+					{
+						pc ++;
 					}
 					break;
 
@@ -231,18 +219,43 @@ public class lab3
 			}	
 		}
 	}
-/*
-	private static void RInstruction(Instruction currentInstruction, char operator, boolean immediate)
-	{
 
-		System.out.println("add");
+	private static void rInstruction(Instruction currentInstruction, char operator, boolean immediate)
+	{
+		int x, y;
 		x = registers.getRegister(currentInstruction.getArguementAt(2));
-		y = registers.getRegister(currentInstruction.getArguementAt(3));
-		System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
-		registers.setRegister(currentInstruction.getArguementAt(1), x + y);	
+
+		if(immediate) 
+		{
+			y = Integer.parseInt(currentInstruction.getArguementAt(3));
+		}
+		
+		else 
+		{
+			y = registers.getRegister(currentInstruction.getArguementAt(3));
+		}
+
+		switch(operator)
+		{
+			case('+'):
+				registers.setRegister(currentInstruction.getArguementAt(1), x + y);	
+				break;
+
+			case('-'):
+				registers.setRegister(currentInstruction.getArguementAt(1), x - y);	
+				break;
+
+			case('&'):
+				registers.setRegister(currentInstruction.getArguementAt(1), x & y);	
+				break;
+
+			case('|'):
+				registers.setRegister(currentInstruction.getArguementAt(1), x | y);	
+				break;
+		}
 		++pc;				
 	}
-*/
+
 	private static int getLabelAddress(ArrayList<Label> labels, String label)
 	{
 		int address = -1;
