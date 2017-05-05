@@ -17,9 +17,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.io.PrintStream;
 
-public class lab2
+public class AssemblyParser
 {
-	public static void main(String[] args) throws FileNotFoundException
+	ArrayList<Instruction> instructions;
+	ArrayList<Label> label;
+
+
+	public AssemblyParser(String[] args) throws FileNotFoundException
 	{
 		int address = -1;
 		String line;
@@ -29,8 +33,8 @@ public class lab2
 		PrintStream file = new PrintStream(System.out);
 		Scanner scanner = new Scanner(readFile);
 
-		ArrayList<Instruction> instructions = new ArrayList<Instruction>(); //Array containing all the instructions
-		ArrayList<Label> labels = new ArrayList<Label>(); //Array containing all the labels
+		this.instructions = new ArrayList<Instruction>(); //Array containing all the instructions
+		this.labels = new ArrayList<Label>(); //Array containing all the labels
 
 		while(scanner.hasNextLine())
 		{
