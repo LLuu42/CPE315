@@ -30,6 +30,7 @@ public class lab3
 	private static int pc = 0;
 	private static PrintStream userDisplay = new PrintStream(System.out);
 	private static RegisterFile registers = new RegisterFile();
+	private static int[] memory = new int[8192];
 
 	public static void main(String[] args) throws FileNotFoundException
 	{
@@ -49,7 +50,7 @@ public class lab3
 			userDisplay.println("Input: " + input);
 			command = input.charAt(0);
 
-			runCommand(command, input);
+			runCommand(command, input, instructions, labels);
 
 			userDisplay.printf("mips> ");
 		}
@@ -58,14 +59,14 @@ public class lab3
 	}
 
 
-	private static void runCommand(char command, String input)
+	private static void runCommand(char command, String input, ArrayList<Instruction> instructions, ArrayList<Label> labels)
 	{
 
 		switch(command)
 		{
 			case('h'):
-			/* Help screen */
-			printHelp();
+				/* Help screen */
+				printHelp();
 				break;
 
 			case('d'):
@@ -76,10 +77,13 @@ public class lab3
 
 			case('s'):
 				userDisplay.println("Step through program:");
+				stepThrough(instructions, labels, input);
 				break;
 
 			case('r'):
 				userDisplay.println("Run until the program ends");
+				System.out.printf("Number of instructions: %d\n", instructions.size());
+				runProgram(instructions, labels, instructions.size());
 				break;
 
 			case('m'):
@@ -90,6 +94,7 @@ public class lab3
 				userDisplay.println("Clear all registers and shit.");
 				pc = 0;
 				registers.setRegistersToZero();
+				memory = new int[8192];
 				break;
 
 			default:
@@ -97,9 +102,23 @@ public class lab3
 		}
 	}
 
-	private static void runProgram(ArrayList<Instruction> instructions, int steps)
+	private static void stepThrough(ArrayList<Instruction> instructions, ArrayList<Label> labels, String input)
 	{
-		int i;
+		int steps = 1;
+		if(input.length() > 1)
+		{
+			//parse through input to find number
+			String[] args = input.split(" ");
+			steps = Integer.parseInt(args[1]);
+		}
+		userDisplay.printf("%d instruction(s) executed.\n", steps);
+		runProgram(instructions, labels, steps);
+	}
+
+	private static void runProgram(ArrayList<Instruction> instructions, ArrayList<Label> labels, int steps)
+	{
+		int i, x, y, memIdx;
+		String label;
 		Instruction currentInstruction;
 		for(i = 0; i < steps; ++i)
 		{
@@ -108,20 +127,39 @@ public class lab3
 			switch(currentInstruction.getInstruction())
 			{
 				case "and":
-					String test = currentInstruction.getArguementAt(0);
-					int x = registers.get(currentInstruction.getArguementAt(1));
-					int y = registers.get(currentInstruction.getArguementAt(2));
+					System.out.println("and");
+					x = registers.getRegister(currentInstruction.getArguementAt(2));
+					y = registers.getRegister(currentInstruction.getArguementAt(3));
+					System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
+					registers.setRegister(currentInstruction.getArguementAt(1), x & y);	
+					++pc;						
 					break;
 
 				case "or":
+					System.out.println("add");
+					x = registers.getRegister(currentInstruction.getArguementAt(2));
+					y = registers.getRegister(currentInstruction.getArguementAt(3));
+					System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
+					registers.setRegister(currentInstruction.getArguementAt(1), x | y);	
+					++pc;	
 					break;
 
 				case "add":
-
+					System.out.println("add");
+					x = registers.getRegister(currentInstruction.getArguementAt(2));
+					y = registers.getRegister(currentInstruction.getArguementAt(3));
+					System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
+					registers.setRegister(currentInstruction.getArguementAt(1), x + y);	
+					++pc;				
 					break;
 
 				case "addi":
-			
+					System.out.println("addi");
+					//System.out.println("1st register: " + currentInstruction.getArguementAt(2));
+					x = registers.getRegister(currentInstruction.getArguementAt(2));
+					y = Integer.parseInt(currentInstruction.getArguementAt(3));
+					registers.setRegister(currentInstruction.getArguementAt(1), x + y);
+					++pc;			
 					break;
 
 				case "sll":
@@ -137,19 +175,43 @@ public class lab3
 					break;
 
 				case "beq":
-	
+					System.out.println("beq");
+					x = registers.getRegister(currentInstruction.getArguementAt(1));
+					y = registers.getRegister(currentInstruction.getArguementAt(2));
+					label = currentInstruction.getArguementAt(3);
+					if(x == y)
+					{
+						pc = getLabelAddress(labels, label);
+					}
 					break;
 
 				case "bne":
-
+					System.out.println("bne");
+					x = registers.getRegister(currentInstruction.getArguementAt(1));
+					y = registers.getRegister(currentInstruction.getArguementAt(2));
+					label = currentInstruction.getArguementAt(3);
+					if(x != y)
+					{
+						pc = getLabelAddress(labels, label);
+					}
 					break;
 
 				case "lw":
-
+					// lw $t,C($s)     # $t = Memory[$s + C]
+					System.out.println("lw");
+					memIdx = registers.getRegister(Machinecode.getRegister(currentInstruction.getArguementAt(3)));
+					x = Integer.parseInt(Machinecode.getOffset(currentInstruction.getArguementAt(2))); //offset
+					registers.setRegister(currentInstruction.getArguementAt(1), memory[memIdx + x]);
+					++pc;	
 					break;
 
 				case "sw":
-
+					// sw $t,C($s)     # Memory[$s + C] = $t
+					System.out.println("sw");
+					memIdx = registers.getRegister(Machinecode.getRegister(currentInstruction.getArguementAt(3)));
+					x = Integer.parseInt(Machinecode.getOffset(currentInstruction.getArguementAt(2))); //offset
+					memory[memIdx + x] = registers.getRegister(currentInstruction.getArguementAt(1));
+					++pc;
 					break;
 
 				case "j":
@@ -169,6 +231,30 @@ public class lab3
 			}	
 		}
 	}
+/*
+	private static void RInstruction(Instruction currentInstruction, char operator, boolean immediate)
+	{
+
+		System.out.println("add");
+		x = registers.getRegister(currentInstruction.getArguementAt(2));
+		y = registers.getRegister(currentInstruction.getArguementAt(3));
+		System.out.printf("Register 1: %d, Register 2: %d\n", x, y);
+		registers.setRegister(currentInstruction.getArguementAt(1), x + y);	
+		++pc;				
+	}
+*/
+	private static int getLabelAddress(ArrayList<Label> labels, String label)
+	{
+		int address = -1;
+		for (Label l : labels)
+		{
+			if(l.getLabel().equals(label))
+			{
+				address = l.getAddress();
+			}
+		}
+		return address;
+	}
 
 	private static void printHelp()
 	{
@@ -183,5 +269,7 @@ public class lab3
 		userDisplay.println("q = exit the program");
 		userDisplay.println();
 	}
+
+
 
 }

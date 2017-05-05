@@ -167,7 +167,7 @@ public class Machinecode
 
 	/* Finds the offset of lw and sw functions. */ 
 	/* Does this by removing the parentheses in the offset arguement(switch to trim later)*/
-	private String getOffset(String line)
+	public static String getOffset(String line)
 	{
 		int parenIdx = line.indexOf('(');
 		return line.substring(0, parenIdx);
@@ -175,7 +175,7 @@ public class Machinecode
 
 	/* Finds the register stored in the parentheses of lw and sw functions. */ 
 	/* Does this by removing the parentheses in the offset arguement(switch to trim later)*/
-	private String getRegister(String line)
+	public static String getRegister(String line)
 	{
 		int closeIdx = line.indexOf(')');
 		return line.substring(0, closeIdx);

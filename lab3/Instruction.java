@@ -30,7 +30,7 @@ public class Instruction
 
 	public String getArguementAt(int i)
 	{
-		return instructions[1];
+		return instructions[i];
 	}
 
 	public int getAddress()

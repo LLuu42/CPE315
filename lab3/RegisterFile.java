@@ -16,12 +16,12 @@ public class RegisterFile
 		setRegistersToZero();
 	}
 
-	public void setRegisters(String register, int value)
+	public void setRegister(String register, int value)
 	{
 		registers.put(register, value);
 	}
 
-	public int getRegisterValue(String register)
+	public int getRegister(String register)
 	{
 		return registers.get(register);
 	}
