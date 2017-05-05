@@ -38,7 +38,7 @@ public class Instruction
 		return this.machinecode.getMachinecode();
 	}
 
-	/* Prints out the contents of the instruction. Used for debudding purposes. */
+	/* Prints out the contents of the instruction. Used for debugging purposes. */
 	public void printAll()
 	{
 		for(String s : instructions)

@@ -14,12 +14,12 @@ public class Label
 		this.label = lable;
 		this.address = address;
 	}
-
+	
 	public String getLabel()
 	{
 		return this.label;
 	}
-
+	
 	public int getAddress()
 	{
 		return this.address;

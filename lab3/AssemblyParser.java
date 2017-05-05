@@ -31,6 +31,16 @@ public class AssemblyParser
 		parseFile(args[0]);
 	}	
 
+	public ArrayList<Instruction> getInstructions()
+	{
+		return instructions;
+	}
+
+	public ArrayList<Label> getLabels()
+	{
+		return labels;
+	}
+
 	/** 
 	* Iterates through the array of Instructions and prints out the machine code for each one of them
 	* Where it prints is specified in the given PrintStream argument

@@ -28,6 +28,11 @@ public class Instruction
 		return instructions[0];
 	}
 
+	public String getArguementAt(int i)
+	{
+		return instructions[1];
+	}
+
 	public int getAddress()
 	{
 		return this.address;
@@ -38,7 +43,7 @@ public class Instruction
 		return this.machinecode.getMachinecode();
 	}
 
-	/* Prints out the contents of the instruction. Used for debudding purposes. */
+	/* Prints out the contents of the instruction. Used for debugging purposes. */
 	public void printAll()
 	{
 		for(String s : instructions)
