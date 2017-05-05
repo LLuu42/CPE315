@@ -91,7 +91,7 @@ public class lab3
 				break;
 
 			case('c'):
-				userDisplay.println("Clear all registers and shit.");
+				userDisplay.println("Simulator Reset");
 				pc = 0;
 				registers.setRegistersToZero();
 				memory = new int[8192];
@@ -142,12 +142,12 @@ public class lab3
 					rInstruction(currentInstruction, '+', true);	
 					break;
 
-				case "sll":
-
-					break;
-
 				case "sub":
 					rInstruction(currentInstruction, '-', false);
+					break;
+
+				case "sll":
+
 					break;
 
 				case "slt":
@@ -187,18 +187,14 @@ public class lab3
 				case "lw":
 					// lw $t,C($s)     # $t = Memory[$s + C]
 					System.out.println("lw");
-					memIdx = registers.getRegister(Machinecode.getRegister(currentInstruction.getArguementAt(3)));
-					x = Integer.parseInt(Machinecode.getOffset(currentInstruction.getArguementAt(2))); //offset
-					registers.setRegister(currentInstruction.getArguementAt(1), memory[memIdx + x]);
+					registers.setRegister(currentInstruction.getArguementAt(1), getMemAddress(currentInstruction));
 					++pc;	
 					break;
 
 				case "sw":
 					// sw $t,C($s)     # Memory[$s + C] = $t
 					System.out.println("sw");
-					memIdx = registers.getRegister(Machinecode.getRegister(currentInstruction.getArguementAt(3)));
-					x = Integer.parseInt(Machinecode.getOffset(currentInstruction.getArguementAt(2))); //offset
-					memory[memIdx + x] = registers.getRegister(currentInstruction.getArguementAt(1));
+					memory[getMemAddress(currentInstruction)] = registers.getRegister(currentInstruction.getArguementAt(1));
 					++pc;
 					break;
 
@@ -218,6 +214,14 @@ public class lab3
 					; 
 			}	
 		}
+	}
+
+	private static int getMemAddress(Instruction currentInstruction)
+	{
+		int offset, memIdx;
+		memIdx = registers.getRegister(Machinecode.getRegister(currentInstruction.getArguementAt(3)));
+		offset = Integer.parseInt(Machinecode.getOffset(currentInstruction.getArguementAt(2)));
+		return(memIdx + offset);
 	}
 
 	private static void rInstruction(Instruction currentInstruction, char operator, boolean immediate)

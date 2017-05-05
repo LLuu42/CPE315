@@ -28,25 +28,25 @@ public class RegisterFile
 
 	public void printRegisters()
 	{
-		userDisplay.printf("$0 = 0\t$v0 = %d\t$v1 = %d\t$a0 = %d\n", 
+		userDisplay.printf("$0 = 0 \t$v0 = %d \t$v1 = %d \t$a0 = %d\n", 
 							registers.get("v0"), registers.get("v1"), registers.get("a0"));
 
-		userDisplay.printf("$a1 = %d\t$a2 = %d\t$a3 = %d\t$t0 = %d\n", 
+		userDisplay.printf("$a1 = %d \t$a2 = %d \t$a3 = %d \t$t0 = %d\n", 
 							registers.get("a1"), registers.get("a2"), registers.get("a3"), registers.get("t0"));
 	
-		userDisplay.printf("$t1 = %d\t$t2 = %d\t$t3 = %d\t$t4 = %d\n", 
+		userDisplay.printf("$t1 = %d \t$t2 = %d \t$t3 = %d \t$t4 = %d\n", 
 							registers.get("t1"), registers.get("t2"), registers.get("t3"), registers.get("t4"));
 
-		userDisplay.printf("$t5 = %d\t$t6 = %d\t$t7 = %d\t$s0 = %d\n", 
+		userDisplay.printf("$t5 = %d \t$t6 = %d \t$t7 = %d \t$s0 = %d\n", 
 							registers.get("t5"), registers.get("t6"), registers.get("t7"), registers.get("s0"));
 
-		userDisplay.printf("$s1 = %d\t$s2 = %d\t$s3 = %d\t$s4 = %d\n", 
+		userDisplay.printf("$s1 = %d \t$s2 = %d \t$s3 = %d \t$s4 = %d\n", 
 							registers.get("s1"), registers.get("s2"), registers.get("s3"), registers.get("s4"));
 
-		userDisplay.printf("$s5 = %d\t$s6 = %d\t$s7 = %d\t$t8 = %d\n", 
+		userDisplay.printf("$s5 = %d \t$s6 = %d \t$s7 = %d \t$t8 = %d\n", 
 							registers.get("s5"), registers.get("s6"), registers.get("s7"), registers.get("t8"));
 
-		userDisplay.printf("$t9 = %d\t$sp = %d\t$ra = %d\n", 
+		userDisplay.printf("$t9 = %d \t$sp = %d \t$ra = %d\n", 
 							registers.get("t9"), registers.get("sp"), registers.get("ra"));
 	}
 
