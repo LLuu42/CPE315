@@ -212,7 +212,7 @@ public class lab3
 
 			case "lw":
 				// lw $t,C($s)     # $t = Memory[$s + C]
-				registers.setRegister(currentInstruction.getArguementAt(1), getMemAddress(currentInstruction));
+				registers.setRegister(currentInstruction.getArguementAt(1), memory[getMemAddress(currentInstruction)]);
 				++pc;	
 				break;
 
@@ -224,7 +224,7 @@ public class lab3
 				break;
 
 			case "j":
-				label = currentInstruction.getArguementAt(3);
+				label = currentInstruction.getArguementAt(1);
 				pc = getLabelAddress(labels, label);
 				break;
 
