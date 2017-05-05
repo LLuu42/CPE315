@@ -55,13 +55,13 @@ public class lab3
 
 		while(!(input = in.nextLine()).equals("q"))
 		{
-			userDisplay.println("Input: " + input);
 			command = input.charAt(0);
-
+			userDisplay.printf("%s\n", input);
 			runCommand(command, input, instructions, labels);
 
 			userDisplay.printf("mips> ");
 		}
+		userDisplay.println("q");
 
 		//aCode.printInstructionMachineCodes(); // test to make sure lab 2 class still worked
 	}
@@ -78,7 +78,7 @@ public class lab3
 				break;
 
 			case('d'):
-				userDisplay.printf("pc = %d\n", pc);
+				userDisplay.printf("\npc = %d\n", pc);
 				registers.printRegisters();
 				break;
 
@@ -96,7 +96,7 @@ public class lab3
 				break;
 
 			case('c'):
-				userDisplay.println("\tSimulator Reset");
+				userDisplay.println("\tSimulator reset");
 				pc = 0;
 				registers.setRegistersToZero();
 				memory = new int[8192];
@@ -130,7 +130,7 @@ public class lab3
 			String[] args = input.split(" ");
 			steps = Integer.parseInt(args[1]);
 		}
-		userDisplay.printf("\t%d instruction(s) executed.\n", steps);
+		userDisplay.printf("\t%d instruction(s) executed\n", steps);
 		for(i = 0; i < steps; ++i)
 		{
 			runProgram(instructions, labels);
@@ -163,7 +163,6 @@ public class lab3
 				break;
 
 			case "add":
-				userDisplay.println("add");
 				rInstruction(currentInstruction, "+", false);		
 				break;
 
@@ -180,11 +179,10 @@ public class lab3
 				break;
 
 			case "slt":
-				rInstruction(currentInstruction, "slt", true);
+				rInstruction(currentInstruction, "slt", false);
 				break;
 
 			case "beq":
-				System.out.println("beq");
 				x = registers.getRegister(currentInstruction.getArguementAt(1));
 				y = registers.getRegister(currentInstruction.getArguementAt(2));
 				label = currentInstruction.getArguementAt(3);
@@ -199,7 +197,6 @@ public class lab3
 				break;
 
 			case "bne":
-				System.out.println("bne");
 				x = registers.getRegister(currentInstruction.getArguementAt(1));
 				y = registers.getRegister(currentInstruction.getArguementAt(2));
 				label = currentInstruction.getArguementAt(3);
@@ -215,14 +212,13 @@ public class lab3
 
 			case "lw":
 				// lw $t,C($s)     # $t = Memory[$s + C]
-				System.out.println("lw");
 				registers.setRegister(currentInstruction.getArguementAt(1), getMemAddress(currentInstruction));
 				++pc;	
 				break;
 
 			case "sw":
 				// sw $t,C($s)     # Memory[$s + C] = $t
-				System.out.println("sw");
+				//userDisplay.println("pc: " + pc);
 				memory[getMemAddress(currentInstruction)] = registers.getRegister(currentInstruction.getArguementAt(1));
 				++pc;
 				break;
@@ -237,8 +233,8 @@ public class lab3
 				break;
 
 			case "jal":
-				registers.setRegister(currentInstruction.getArguementAt(1), pc+1);
-				label = currentInstruction.getArguementAt(2);
+				registers.setRegister("ra", pc + 1);
+				label = currentInstruction.getArguementAt(1);
 				pc = getLabelAddress(labels, label);
 				break;
 
