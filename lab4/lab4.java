@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 
 
-public class lab3
+public class lab4
 {
 	private static int pc = 0;
 	private static int cycles = 2; //playing a dangerous game here
@@ -167,10 +167,10 @@ public class lab3
 		}
 		//DecimalFormat dtf = new DecimalFormat("0.###");
 
-		userDisplay.printf("Program Complete\n");
+		userDisplay.printf("Program complete\n");
 		userDisplay.printf("CPI = %.03f\t Cycles = %d\t Instructions = %d\n", 
 				(Math.floor(1000 * (cycles / (double)(instructionCount)) + 0.5) / 1000), cycles, instructionCount);
-		System.exit(0);
+		//userDisplay.println();
 	}
 
 	private static void runProgram(ArrayList<Instruction> instructions, ArrayList<Label> labels)
@@ -186,7 +186,6 @@ public class lab3
 		}
 		else if(processor.checkForStall())
 		{
-			userDisplay.println("STALL");
 			pushInstruction = new Instruction("stall", -1, null);
 			--pc;
 
@@ -280,10 +279,6 @@ public class lab3
 
 			case "lw":
 				// lw $t,C($s)     # $t = Memory[$s + C]
-			
-				userDisplay.println("lw: ");
-
-			
 				registers.setRegister(currentInstruction.getArguementAt(1), memory[getMemAddress(currentInstruction)]);
 
 				++pc;
@@ -342,7 +337,7 @@ public class lab3
 	private static int getMemAddress(Instruction currentInstruction)
 	{
 		int offset, memIdx;
-		userDisplay.println(currentInstruction.getArguementAt(3));
+		//userDisplay.println(currentInstruction.getArguementAt(3));
 		memIdx = registers.getRegister(Machinecode.getRegister(currentInstruction.getArguementAt(3)));
 		offset = Integer.parseInt(Machinecode.getOffset(currentInstruction.getArguementAt(2)));
 		return(memIdx + offset);

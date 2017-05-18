@@ -37,13 +37,13 @@ public class Processor
 		if(hasJump(0))
 		{
 
-			lab3.runInstruction(instructionQueue[0]); //sets the PC counter to whatever jump is
+			lab4.runInstruction(instructionQueue[0]); //sets the PC counter to whatever jump is
 			decrementPC = true;
 		}
 		if(hasJump(2))
 		{
 			dequeuedInstruction = new Instruction("yolo", -1, null);
-			lab3.incrementPC();
+			lab4.incrementPC();
 		}
 		else
 		{
@@ -67,7 +67,7 @@ public class Processor
 
 		if(decrementPC)
 		{
-			lab3.decrementPC();
+			lab4.decrementPC();
 			decrementPC = false;
 		}
 
@@ -93,6 +93,7 @@ public class Processor
 			//Print the number of instructions
 			userDisplay.print(instructionQueue[i].getInstruction() + "\t");
 		}
+		userDisplay.println();
 		userDisplay.println();
 	}
 
