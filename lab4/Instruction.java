@@ -15,6 +15,7 @@ public class Instruction
 	private Machinecode machinecode; //machine code for the instruction
 	private int address; //location of the instruction
 
+
 	public Instruction(String line, int address, ArrayList<Label> labels)
 	{
 		this.line = line;
@@ -30,7 +31,19 @@ public class Instruction
 
 	public String getArguementAt(int i)
 	{
-		return instructions[i];
+		String retInstruction;
+
+		if(i < instructions.length)
+		{
+			//System.out.println("wat");
+			retInstruction = instructions[i];	
+		}
+		else
+		{
+			retInstruction = null;
+		}
+		return retInstruction;
+		
 	}
 
 	public int getAddress()
@@ -42,6 +55,7 @@ public class Instruction
 	{
 		return this.machinecode.getMachinecode();
 	}
+
 
 	/* Prints out the contents of the instruction. Used for debugging purposes. */
 	public void printAll()

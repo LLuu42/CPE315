@@ -2,7 +2,7 @@ import java.lang.*;
 import java.util.*;
 
 /**
-* lab 3 Assignment
+* lab 4 Assignment
 * CPE 315
 * Dr. John Seng
 * @author Lara Luu
@@ -28,9 +28,18 @@ import java.util.ArrayList;
 public class lab3
 {
 	private static int pc = 0;
+	private static int cycles = 0;
+	private static int instructions = 0;
+
+	private static Processor processor = new Processor();
+
 	private static PrintStream userDisplay = new PrintStream(System.out);
 	private static RegisterFile registers = new RegisterFile();
+
 	private static int[] memory = new int[8192];
+
+	private static boolean jumpTaken = false;
+
 
 	public static void main(String[] args) throws FileNotFoundException
 	{
@@ -130,10 +139,14 @@ public class lab3
 			String[] args = input.split(" ");
 			steps = Integer.parseInt(args[1]);
 		}
-		userDisplay.printf("\t%d instruction(s) executed\n", steps);
+
 		for(i = 0; i < steps; ++i)
 		{
+			++ cycles;
 			runProgram(instructions, labels);
+			userDisplay.printf("\npc\t\tif/id \tid/exe\texe/mem\tmem/wb \n", steps);
+			userDisplay.printf("%d\t\t", pc);
+			processor.printCycles();
 		}
 	}
 
@@ -149,9 +162,34 @@ public class lab3
 	{
 		int x, y;
 		String label;
-		Instruction currentInstruction;
-		currentInstruction = instructions.get(pc);
+		Instruction pushInstruction, currentInstruction;
 
+
+		if(jumpTaken) //waste a cycle
+		{
+			pushInstruction = new Instruction("squash", -1, null);
+			jumpTaken = false;
+		}
+
+		else if(processor.checkForStall())
+		{
+			userDisplay.println("STALL");
+			pushInstruction = new Instruction("stall", -1, null);
+			--pc;
+
+		}
+		else
+		{
+			pushInstruction = instructions.get(pc);
+		}
+
+		currentInstruction = processor.pushInstruction(pushInstruction);
+/*
+		userDisplay.println("currentInstruction: " + currentInstruction.getInstruction());
+		userDisplay.println("1: " + currentInstruction.getArguementAt(1));
+		userDisplay.println("2: " + currentInstruction.getArguementAt(2));
+		userDisplay.println("3: " + currentInstruction.getArguementAt(3));
+*/
 		switch(currentInstruction.getInstruction())
 		{
 			case "and":
@@ -189,6 +227,7 @@ public class lab3
 				if(x == y)
 				{
 					pc = getLabelAddress(labels, label);
+					processor.branchTaken();
 				}
 				else
 				{
@@ -203,6 +242,7 @@ public class lab3
 				if(x != y)
 				{
 					pc = getLabelAddress(labels, label);
+					processor.branchTaken();
 				}
 				else
 				{
@@ -212,13 +252,17 @@ public class lab3
 
 			case "lw":
 				// lw $t,C($s)     # $t = Memory[$s + C]
+			
+				userDisplay.println("lw: ");
+
+			
 				registers.setRegister(currentInstruction.getArguementAt(1), memory[getMemAddress(currentInstruction)]);
+
 				++pc;	
 				break;
 
 			case "sw":
 				// sw $t,C($s)     # Memory[$s + C] = $t
-				//userDisplay.println("pc: " + pc);
 				memory[getMemAddress(currentInstruction)] = registers.getRegister(currentInstruction.getArguementAt(1));
 				++pc;
 				break;
@@ -226,19 +270,28 @@ public class lab3
 			case "j":
 				label = currentInstruction.getArguementAt(1);
 				pc = getLabelAddress(labels, label);
+				jumpTaken = true;
 				break;
 
 			case "jr":
 				pc = registers.getRegister(currentInstruction.getArguementAt(1));
+				jumpTaken = true;
 				break;
 
 			case "jal":
 				registers.setRegister("ra", pc + 1);
 				label = currentInstruction.getArguementAt(1);
 				pc = getLabelAddress(labels, label);
+				jumpTaken = true;
 				break;
 
+			case "empty":
+			case "stall":
+			case "squash":
+				++pc;
+
 			default:
+				userDisplay.println("No Instructions Taken.");
 				; 
 		}	
 	}
@@ -246,6 +299,7 @@ public class lab3
 	private static int getMemAddress(Instruction currentInstruction)
 	{
 		int offset, memIdx;
+		userDisplay.println(currentInstruction.getArguementAt(3));
 		memIdx = registers.getRegister(Machinecode.getRegister(currentInstruction.getArguementAt(3)));
 		offset = Integer.parseInt(Machinecode.getOffset(currentInstruction.getArguementAt(2)));
 		return(memIdx + offset);
