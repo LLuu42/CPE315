@@ -1,5 +1,6 @@
 import java.lang.*;
 import java.util.*;
+import java.text.DecimalFormat;
 
 /**
 * lab 4 Assignment
@@ -28,8 +29,8 @@ import java.util.ArrayList;
 public class lab3
 {
 	private static int pc = 0;
-	private static int cycles = 0;
-	private static int instructions = 0;
+	private static int cycles = 2; //playing a dangerous game here
+	private static int instructionCount = 0;
 
 	private static Processor processor = new Processor();
 
@@ -39,6 +40,9 @@ public class lab3
 	private static int[] memory = new int[8192];
 
 	private static boolean jumpTaken = false;
+
+	private static ArrayList<Instruction> instructions;
+	private static ArrayList<Label> labels;
 
 
 	public static void main(String[] args) throws FileNotFoundException
@@ -55,8 +59,8 @@ public class lab3
 		String input;
 		char command;
 		AssemblyParser aCode = new AssemblyParser(args[0]); //(Put this in once ready to test file parsing)
-		ArrayList<Instruction> instructions = aCode.getInstructions();
-		ArrayList<Label> labels = aCode.getLabels();
+		instructions = aCode.getInstructions();
+		labels = aCode.getLabels();
 
 
 		/* Begin prompting and accepting user input */
@@ -142,7 +146,6 @@ public class lab3
 
 		for(i = 0; i < steps; ++i)
 		{
-			++ cycles;
 			runProgram(instructions, labels);
 			userDisplay.printf("\npc\t\tif/id \tid/exe\texe/mem\tmem/wb \n", steps);
 			userDisplay.printf("%d\t\t", pc);
@@ -156,21 +159,31 @@ public class lab3
 		{
 			runProgram(instructions, labels);
 		}
+
+		pc = -10;
+		for(int i = 0; i < 3; ++i) //empty out processor
+		{
+			runInstruction(processor.pushInstruction(new Instruction("finish", -1, null)));
+		}
+		//DecimalFormat dtf = new DecimalFormat("0.###");
+
+		userDisplay.printf("Program Complete\n");
+		userDisplay.printf("CPI = %.03f\t Cycles = %d\t Instructions = %d\n", 
+				(Math.floor(1000 * (cycles / (double)(instructionCount)) + 0.5) / 1000), cycles, instructionCount);
+		System.exit(0);
 	}
 
 	private static void runProgram(ArrayList<Instruction> instructions, ArrayList<Label> labels)
 	{
-		int x, y;
-		String label;
+
 		Instruction pushInstruction, currentInstruction;
 
 
-		if(jumpTaken) //waste a cycle
+		if(processor.hasJump(0))
 		{
 			pushInstruction = new Instruction("squash", -1, null);
-			jumpTaken = false;
+			
 		}
-
 		else if(processor.checkForStall())
 		{
 			userDisplay.println("STALL");
@@ -180,16 +193,29 @@ public class lab3
 		}
 		else
 		{
-			pushInstruction = instructions.get(pc);
+			if(pc < 0)
+			{
+				pushInstruction = new Instruction("done", -1, null);
+			}
+			else
+			{
+				pushInstruction = instructions.get(pc);
+			}
 		}
 
 		currentInstruction = processor.pushInstruction(pushInstruction);
-/*
-		userDisplay.println("currentInstruction: " + currentInstruction.getInstruction());
-		userDisplay.println("1: " + currentInstruction.getArguementAt(1));
-		userDisplay.println("2: " + currentInstruction.getArguementAt(2));
-		userDisplay.println("3: " + currentInstruction.getArguementAt(3));
-*/
+
+		runInstruction(currentInstruction);	
+	}
+
+	public static void runInstruction(Instruction currentInstruction)
+	{
+		int x, y;
+		String label;
+		++instructionCount;
+		++cycles;
+
+	
 		switch(currentInstruction.getInstruction())
 		{
 			case "and":
@@ -233,6 +259,7 @@ public class lab3
 				{
 					pc ++;
 				}
+				-- cycles;
 				break;
 
 			case "bne":
@@ -248,6 +275,7 @@ public class lab3
 				{
 					pc ++;
 				}
+				-- cycles;
 				break;
 
 			case "lw":
@@ -258,7 +286,7 @@ public class lab3
 			
 				registers.setRegister(currentInstruction.getArguementAt(1), memory[getMemAddress(currentInstruction)]);
 
-				++pc;	
+				++pc;
 				break;
 
 			case "sw":
@@ -270,30 +298,45 @@ public class lab3
 			case "j":
 				label = currentInstruction.getArguementAt(1);
 				pc = getLabelAddress(labels, label);
-				jumpTaken = true;
+
 				break;
 
 			case "jr":
 				pc = registers.getRegister(currentInstruction.getArguementAt(1));
-				jumpTaken = true;
 				break;
 
 			case "jal":
 				registers.setRegister("ra", pc + 1);
 				label = currentInstruction.getArguementAt(1);
 				pc = getLabelAddress(labels, label);
-				jumpTaken = true;
 				break;
 
 			case "empty":
 			case "stall":
 			case "squash":
 				++pc;
+				--instructionCount;
+				break;
 
 			default:
-				userDisplay.println("No Instructions Taken.");
+				--instructionCount
 				; 
-		}	
+		}
+	}
+
+	public void setPC(int i)
+	{
+		pc = i;
+	}
+
+	public static void incrementPC()
+	{
+		pc += 1;
+	}
+
+	public static void decrementPC()
+	{
+		pc -= 1;
 	}
 
 	private static int getMemAddress(Instruction currentInstruction)

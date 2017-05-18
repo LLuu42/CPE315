@@ -16,6 +16,8 @@ public class Processor
 
 	private static PrintStream userDisplay = new PrintStream(System.out);
 
+	private static boolean decrementPC = false;
+
 	public Processor()
 	{
 		this.instructionQueue = new Instruction[4];
@@ -29,38 +31,47 @@ public class Processor
 
 	public Instruction pushInstruction(Instruction instruction)
 	{
-		userDisplay.println("pushInstruction");
 
 		Instruction dequeuedInstruction; // returns the instruction to be run in the processor
 
+		if(hasJump(0))
+		{
 
-		dequeuedInstruction = instructionQueue[EXEMEM]; // 3rd instruction b/c run in exe stage
+			lab3.runInstruction(instructionQueue[0]); //sets the PC counter to whatever jump is
+			decrementPC = true;
+		}
+		if(hasJump(2))
+		{
+			dequeuedInstruction = new Instruction("yolo", -1, null);
+			lab3.incrementPC();
+		}
+		else
+		{
+			dequeuedInstruction = instructionQueue[EXEMEM]; // 3rd instruction b/c run in exe stage
+		}
 
 		// Shift all the instructions over in the processor
 		instructionQueue[MEMWB] = instructionQueue[EXEMEM];
-		//userDisplay.println("MEMWB " + instructionQueue[MEMWB].getInstruction());
-
 		instructionQueue[EXEMEM] = instructionQueue[IDEXE];
-		//userDisplay.println("EXEMEM " + instructionQueue[EXEMEM].getInstruction());
 
 		if(instruction.getInstruction().equals("stall"))
 		{
 			//Entered in a stall, have to swap indexes 0 and 1
 			instructionQueue[IDEXE] = instruction;
-			//userDisplay.println("IDEXE " + instructionQueue[IDEXE].getInstruction());
-
 		}
 		else
 		{
 			instructionQueue[IDEXE] = instructionQueue[IFID];
-			//userDisplay.println("IDEXE " + instructionQueue[IDEXE].getInstruction());
-
 			instructionQueue[IFID] = instruction;
-			//userDisplay.println("IFID " + instructionQueue[IFID].getInstruction());
+		}
+
+		if(decrementPC)
+		{
+			lab3.decrementPC();
+			decrementPC = false;
 		}
 
 		++cycles;
-
 		return dequeuedInstruction;
 	}
 
@@ -85,6 +96,13 @@ public class Processor
 		userDisplay.println();
 	}
 
+	public boolean hasJump(int i)
+	{
+		return instructionQueue[i].getInstruction().equals("j") || 
+			instructionQueue[i].getInstruction().equals("jr") || 
+			instructionQueue[i].getInstruction().equals("jal");
+	}
+
 	public int getCycles()
 	{
 		return cycles;
@@ -98,13 +116,7 @@ public class Processor
 
 		if(instructionQueue[IDEXE].getInstruction().equals("lw"))
 		{
-			userDisplay.println("Checking for stall: ");
-
 			String modifiedRegister = instructionQueue[IDEXE].getArguementAt(1);
-
-			userDisplay.println("modified reg: " + modifiedRegister);
-			userDisplay.println("check reg 1: " + checkInstruction.getArguementAt(2));
-			userDisplay.println("check reg 2: " + checkInstruction.getArguementAt(3));
 
 			//Stall possible
 			if(checkInstruction.getArguementAt(1) != null && checkInstruction.getArguementAt(2).equals(modifiedRegister))
@@ -116,7 +128,6 @@ public class Processor
 				stall = true;
 			}
 		}
-		//System.out.println(stall ? "true":"false");
 		return stall;
 	}
 }

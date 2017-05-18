@@ -76,33 +76,35 @@ public class AssemblyParser
 
 			if((line = line.trim()).length() > 0) //remove whitespace. do not process blank lines
 			{
-
-				line = line.replace("$", " ");
-				line = line.replace(",", " ");
-				line = line.replace("\t", " ");
-				line = line.toLowerCase();
-				++ address;
-
-				if(hasLabel(line))
+				if(line.charAt(0) != '#')
 				{
-					/* Create new lable object with lable name and address location */
-					Label label = new Label(getLabel(line), address);
-					labels.add(label);
+					line = line.replace("$", " ");
+					line = line.replace(",", " ");
+					line = line.replace("\t", " ");
+					line = line.toLowerCase();
+					++ address;
 
-				}
+					if(hasLabel(line))
+					{
+						/* Create new lable object with lable name and address location */
+						Label label = new Label(getLabel(line), address);
+						labels.add(label);
 
-				line = getInstruction(line); //removes all comments and labels from the line.
+					}
 
-				if(line.length() > 0)
-				{
-					/* Line is an address */
-					Instruction instruction = new Instruction(line, address, labels);
-					instructions.add(instruction);
-				}
-				else
-				{ 	
-					/* Line is either a comment or label only, do not count towards address length. */
-					-- address;
+					line = getInstruction(line); //removes all comments and labels from the line.
+
+					if(line.length() > 0)
+					{
+						/* Line is an address */
+						Instruction instruction = new Instruction(line, address, labels);
+						instructions.add(instruction);
+					}
+					else
+					{ 	
+						/* Line is either a comment or label only, do not count towards address length. */
+						-- address;
+					}
 				}
 			}
 		}
