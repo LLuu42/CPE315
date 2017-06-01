@@ -1,0 +1,276 @@
+	addi	$a0, $0, 30			# Line(30,80,30,30) (body)
+	addi	$a1, $0, 80	
+	addi	$a2, $0, 30
+	addi	$a3, $0, 30
+	jal		line
+
+	addi	$a0, $0, 20			# Line(20,1,30,30) (left leg)
+	addi	$a1, $0, 1
+	addi	$a2, $0, 30
+	addi	$a3, $0, 30
+	jal		line
+
+	addi	$a0, $0, 40			# Line(40,1,30,30) (right leg)
+	addi	$a1, $0, 1
+	addi	$a2, $0, 30
+	addi	$a3, $0, 30
+	jal		line
+
+	addi	$a0, $0, 15			# Line(15,60,30,50) (left arm)
+	addi	$a1, $0, 60
+	addi	$a2, $0, 30
+	addi	$a3, $0, 50
+	jal		line
+
+	addi	$a0, $0, 30			# Line(30,50,45,60) (right arm)
+	addi	$a1, $0, 50
+	addi	$a2, $0, 45
+	addi	$a3, $0, 60
+	jal		line
+
+	addi	$a0, $0, 24 		# Circle(24,105,3) (left eye)
+	addi	$a1, $0, 105
+	addi	$a2, $0, 3
+	jal		circle
+
+	addi	$a0, $0, 36 		# Circle(36,105,3) (right eye)
+	addi	$a1, $0, 105
+	addi	$a2, $0, 3
+	jal		circle
+
+	addi	$a0, $0, 25			# Line(25,90,35,90) (mouth center)
+	addi	$a1, $0, 90
+	addi 	$a2, $0, 35
+	addi 	$a3, $0, 90
+	jal 	line
+
+	addi 	$a0, $0, 25			# Line(25,90,20,95) (mouth left)
+	addi 	$a1, $0, 90
+	addi 	$a2, $0, 20
+	addi 	$a3, $0, 95
+	jal 	line
+
+	addi 	$a0, $0, 35			# Line(35,90,40,95) (mouth right)
+	addi 	$a1, $0, 90
+	addi 	$a2, $0, 40
+	addi 	$a3, $0, 95
+	jal 	line
+
+
+# figure.asm
+# Author: Lara Luu
+#
+# Utilizes Bresenham line and circle drawing algorithms to plot coordinates and draw a stick figure
+# Input: Nothing
+# Output: Coordinates into a .csv file
+
+
+########## Define Function Variable Registers ##################
+
+######## LINE: #########				####### CIRCLE: ########
+# Line(x0, y0, x1, y1):					Circle(xc, yc, r):
+# $a0 = x0 								$a0 = xc
+# $a1 = y0								$a1 = yc
+# $a2 = x1 								$a2 = r
+# $a3 = y1 								
+###										###
+# $s0 = st								$s0 = x
+# $s1 = deltax							$s1 = y
+# $s2 = deltay 							$s2 = g
+# $s3 = error							$s3 = diagonalInc
+# $s4 = y								$s4 = rightInc
+# $s5 = ystep							
+# $s6 = spIndex
+
+
+
+
+   addi   $a0, $0, 30
+   addi   $a1, $0, 80
+   addi   $a2, $0, 30
+   addi    $a3, $0, 30
+   jal    Line
+   
+   addi   $a0, $0, 20
+   addi   $a1, $0, 1
+   addi   $a2, $0, 30
+   addi    $a3, $0, 30
+   jal    Line
+   
+   addi   $a0, $0, 40
+   addi   $a1, $0, 1
+   addi   $a2, $0, 30
+   addi    $a3, $0, 30
+   jal    Line
+   
+   addi   $a0, $0, 15
+   addi   $a1, $0, 60
+   addi   $a2, $0, 30
+   addi    $a3, $0, 50
+   jal    Line
+   
+   addi   $a0, $0, 30
+   addi   $a1, $0, 50
+   addi   $a2, $0, 45
+   addi    $a3, $0, 60
+   jal    Line
+   
+   addi   $a0, $0, 24
+   addi   $a1, $0, 105
+   addi   $a2, $0, 3
+   jal    Circle
+   
+   addi   $a0, $0, 36
+   addi   $a1, $0, 105
+   addi   $a2, $0, 3
+   jal    Circle
+   
+   addi   $a0, $0, 25
+   addi   $a1, $0, 90
+   addi   $a2, $0, 35
+   addi    $a3, $0, 90
+   jal    Line
+   
+   addi   $a0, $0, 25
+   addi   $a1, $0, 90
+   addi   $a2, $0, 20
+   addi    $a3, $0, 95
+   jal    Line
+   
+   addi   $a0, $0, 35
+   addi   $a1, $0, 90
+   addi   $a2, $0, 40
+   addi    $a3, $0, 95
+   jal    Line
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ***********************************************
+
+   line: #a0 = x0, a1 = y0, a2 = x1, a3 = y1
+
+   slt    $t0, $a2, $a0         # Check if x1 < x0
+   beq    $t0, $0, skipabsdx    # Skip abs
+
+   sub    $t0, $a0, $a2         # dx = x0 - x1
+   j      L1
+
+   skipabsdx:
+      sub    $t0, $a2, $a0      # dx = x1 - x0
+
+   L1:
+
+      slt    $t1, $a3, $a1      # Check if y1 < y0
+      beq    $t1, $0, skipabsdy # Skip abs
+
+      sub    $t1, $a1, $a3      # dy = y0 - y1
+      j       L2
+
+   skipabsdy:
+      sub    $t1, $a3, $a1      # dy = y1 - y0
+
+   L2:
+      addi   $t3, $0, 1         # st = 1
+      slt    $t2, $t0, $t1      # Checks if dx < dy
+      bne    $t2, $0, skipst
+
+      add    $t3, $0, $0        # st = 0
+
+      skipst:
+
+      beq    $t3, $0, skip1
+
+      add    $t4, $a0, $0
+      add    $a0, $a1, $0
+      add    $a1, $t4, $0
+
+      add    $t4, $a2, $0
+      add    $a2, $a3, $0
+      add    $a3, $t4, $0
+
+      skip1:
+
+      slt    $t4, $a2, $a0
+      beq    $t4, $0, skip2
+
+      add    $t4, $a0, $0
+      add    $a0, $a2, $0
+      add    $a2, $t4, $0
+
+      add    $t4, $a1, $0
+      add    $a1, $a3, $0
+      add    $a3, $t4, $0
+
+      skip2:
+
+      sub    $t0, $a2, $a0       # dx = x1 - x0
+
+      slt    $t1, $a3, $a1       # Check if y1 < y0
+      beq    $t1, $0, skipabsdy2 # Skip abs
+
+      sub    $t1, $a1, $a3       # dy = y0 - y1
+      j       L3
+
+      skipabsdy2:
+      sub    $t1, $a3, $a1       # dy = y1 - y0
+
+      L3:
+
+      add    $t2, $0, $0         # error = 0
+      add    $t4, $a1, $0        # y = y0
+
+      addi   $t5, $0, 1          # ystep = 1
+      slt    $t6, $a1, $a3       # Check if y0 < y1
+      bne    $t6, $0, skip3
+
+      addi   $t5, $0, -1         # ystep = -1
+
+      skip3:
+
+      add    $t6, $a0, $0        # i = x0
+      addi   $t7, $a2, 1
+
+      lineLoop:
+         beq   $t6, $t7, ExitlineLoop
+
+         beq   $t3, $0, STELSE
+
+         sw    $t4, 0($sp)
+         sw    $t6, 1($sp)
+         addi  $sp, $sp, 2
+
+         j     L4
+
+         STELSE:
+            sw    $t4, 1($sp)
+            sw    $t6, 0($sp)
+            addi  $sp, $sp, 2
+
+         L4:
+
+         add   $t2, $t2, $t1      # error = error + dy
+         sll   $t8, $t2,  1       # error * 2
+         slt   $t9, $t8, $t0      # Checks if error * 2 < dx
+
+         bne   $t9, $0, skip4
+
+         add   $t4, $t4, $t5
+         sub   $t2, $t2, $t0
+
+         skip4:
+
+         addi   $t6, $t6, 1       #i++
+         j      lineLoop
+
+         ExitlineLoop:
+            jr   $ra

@@ -25,10 +25,13 @@ import java.util.ArrayList;
 
 
 
-public class lab3
+public class lab5 
 {
 	private static int pc = 0;
 	private static PrintStream userDisplay = new PrintStream(System.out);
+
+	private static PrintStream printCsv;
+
 	private static RegisterFile registers = new RegisterFile();
 	private static int[] memory = new int[8192];
 	private static BranchPredictor bPredictor;
@@ -50,6 +53,10 @@ public class lab3
 		{
 			ghrSize = Integer.parseInt(args[2]);
 		}
+		else
+		{
+			ghrSize = 2;
+		}
 
 		String input;
 		char command;
@@ -57,10 +64,11 @@ public class lab3
 		ArrayList<Instruction> instructions = aCode.getInstructions();
 		ArrayList<Label> labels = aCode.getLabels();
 
-		ghrSize = Integer.parseInt(args[2]);
-		// Init Branch Predictor
-		userDisplay.printf("ghr size: %d\n", ghrSize);
+
 		bPredictor = new BranchPredictor(ghrSize);
+
+		File csvFile = new File("coordinates.csv");
+		printCsv = new PrintStream(csvFile);
 
 
 		/* Begin prompting and accepting user input */
@@ -122,7 +130,7 @@ public class lab3
 				runUntilBranch(instructions, labels);
 
 			case('o'):
-				//
+				printToCsv();
 				break;
 
 			default:
@@ -130,7 +138,13 @@ public class lab3
 		}
 	}
 
-
+	private static void printToCsv()
+	{
+		for(int i = 0; i < memory.length; i+=2)
+		{
+			printCsv.printf("%d, %d\n", memory[i], memory[i+1]);
+		}
+	}
 
 	private static void displayMemory(String args)
 	{

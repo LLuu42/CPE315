@@ -35,8 +35,6 @@ class BranchPredictor
 
 	public void updatePrediction(boolean taken, boolean res)
 	{
-
-
 		if(taken == res)
 		{
 			++ correctPredictions;
@@ -91,8 +89,9 @@ class BranchPredictor
 	}
 
 	/* True if taken, false if not */
-	private boolean isCorrect(boolean taken, boolean res)
+	private boolean checkifCorrect(boolean taken, boolean res)
 	{
+		++ correctPredictions;
 		return (taken == res);
 	}
 
